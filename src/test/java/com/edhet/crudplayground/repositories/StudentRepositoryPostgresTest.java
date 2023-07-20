@@ -1,6 +1,5 @@
 package com.edhet.crudplayground.repositories;
 
-import com.edhet.crudplayground.models.StudentMongo;
 import com.edhet.crudplayground.models.StudentPostgres;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -19,11 +18,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class StudentRepositoryPostgresTest {
 
     @Autowired
-    private StudentRepositoryPostgres repository;
+    private StudentRepositoryPostgres studentRepositoryPostgres;
 
     @AfterEach
     void tearDown() {
-        repository.deleteAll();
+        studentRepositoryPostgres.deleteAll();
     }
 
     @Test
@@ -32,8 +31,8 @@ class StudentRepositoryPostgresTest {
         StudentPostgres student = new StudentPostgres("name", "email@email.com", "course", LocalDate.of(2000, 1, 1), MALE);
 
         // WHEN
-        repository.save(student);
-        Optional<StudentPostgres> result = repository.findByEmail(student.getEmail());
+        studentRepositoryPostgres.save(student);
+        Optional<StudentPostgres> result = studentRepositoryPostgres.findByEmail(student.getEmail());
 
         // THEN
         assertTrue(result.isPresent());
@@ -45,7 +44,7 @@ class StudentRepositoryPostgresTest {
         String email = "email@email.com";
 
         // WHEN
-        Optional<StudentPostgres> result = repository.findByEmail(email);
+        Optional<StudentPostgres> result = studentRepositoryPostgres.findByEmail(email);
 
         // THEN
         assertFalse(result.isPresent());

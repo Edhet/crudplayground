@@ -16,11 +16,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class StudentRepositoryMongoTest {
 
     @Autowired
-    private StudentRepositoryMongo repository;
+    private StudentRepositoryMongo studentRepositoryMongo;
 
     @AfterEach
     void tearDown() {
-        repository.deleteAll();
+        studentRepositoryMongo.deleteAll();
     }
 
     @Test
@@ -29,8 +29,8 @@ class StudentRepositoryMongoTest {
         StudentMongo student = new StudentMongo("name", "email@email.com", "course", LocalDate.of(2000, 1, 1), MALE);
 
         // WHEN
-        repository.save(student);
-        Optional<StudentMongo> result = repository.findByEmail(student.getEmail());
+        studentRepositoryMongo.save(student);
+        Optional<StudentMongo> result = studentRepositoryMongo.findByEmail(student.getEmail());
 
         // THEN
         assertTrue(result.isPresent());
@@ -42,7 +42,7 @@ class StudentRepositoryMongoTest {
         String email = "email@email.com";
 
         // WHEN
-        Optional<StudentMongo> result = repository.findByEmail(email);
+        Optional<StudentMongo> result = studentRepositoryMongo.findByEmail(email);
 
         // THEN
         assertFalse(result.isPresent());
