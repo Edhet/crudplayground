@@ -4,6 +4,7 @@ import com.edhet.crudplayground.dtos.StudentRequest;
 import com.edhet.crudplayground.exceptions.EmailTakenException;
 import com.edhet.crudplayground.exceptions.StudentNotFoundException;
 import com.edhet.crudplayground.models.StudentMongo;
+import com.edhet.crudplayground.models.StudentPostgres;
 import com.edhet.crudplayground.repositories.StudentRepositoryMongo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -145,7 +146,6 @@ class StudentServiceMongoImplTest {
         // THEN
         verify(studentMapper).requestToMongo(request);
         verify(studentRepositoryMongo).findById(id);
-        // should this even work 🤨
         assertEquals(expected, student);
         verify(studentRepositoryMongo).save(student);
     }
@@ -166,13 +166,14 @@ class StudentServiceMongoImplTest {
     void updateStudent_EmailTaken() {
         // GIVEN
         StudentRequest request = new StudentRequest("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
-        StudentMongo anyNonNullMongo = new StudentMongo("new", "new@email.com", "new", NEW_BIRTH_DATE, FEMALE);
+        StudentMongo student = new StudentMongo("new", "new@email.com", "new", NEW_BIRTH_DATE, FEMALE);
+        StudentMongo differentNonNull = new StudentMongo("different", "different@email.com", "new", NEW_BIRTH_DATE, FEMALE);
 
         String id = "id";
 
-        when(studentMapper.requestToMongo(request)).thenReturn(anyNonNullMongo);
-        when(studentRepositoryMongo.findById(id)).thenReturn(Optional.of(anyNonNullMongo));
-        when(studentRepositoryMongo.findByEmail(anyNonNullMongo.getEmail())).thenReturn(Optional.of(anyNonNullMongo));
+        when(studentMapper.requestToMongo(request)).thenReturn(student);
+        when(studentRepositoryMongo.findById(id)).thenReturn(Optional.of(differentNonNull));
+        when(studentRepositoryMongo.findByEmail(student.getEmail())).thenReturn(Optional.of(student));
 
         // THEN
         assertThrows(EmailTakenException.class, () -> studentServiceMongo.updateStudent(id, request));

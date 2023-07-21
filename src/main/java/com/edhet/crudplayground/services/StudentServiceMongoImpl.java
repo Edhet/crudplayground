@@ -71,7 +71,7 @@ public class StudentServiceMongoImpl implements StudentService {
         if (student.getCourse() != null) {
             studentReference.setCourse(student.getCourse());
         }
-        if (!student.getEmail().isEmpty()) {
+        if (!student.getEmail().isEmpty() && !student.getEmail().equals(studentReference.getEmail())) {
             if (studentRepositoryMongo.findByEmail(student.getEmail()).isPresent())
                 throw new EmailTakenException("Email taken");
             studentReference.setEmail(student.getEmail());

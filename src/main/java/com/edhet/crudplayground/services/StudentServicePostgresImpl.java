@@ -9,10 +9,8 @@ import com.edhet.crudplayground.models.StudentPostgres;
 import com.edhet.crudplayground.repositories.StudentRepositoryPostgres;
 import org.springframework.stereotype.Service;
 
-import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -29,26 +27,20 @@ public class StudentServicePostgresImpl implements StudentService {
     @Override
     public StudentDTO getStudent(String studentId) throws StudentNotFoundException, InvalidStudentIdFormatException {
         Long id = validPostgresId(studentId);
-        return studentMapper.postgresToDto(
-                studentRepositoryPostgres.findById(id)
-                        .orElseThrow(() -> new StudentNotFoundException("No student with ID " + studentId + " in Postgres"))
-        );
+        return studentMapper.postgresToDto(studentRepositoryPostgres.findById(id).orElseThrow(() -> new StudentNotFoundException("No student with ID " + studentId + " in Postgres")));
     }
 
     @Override
     public List<StudentDTO> getStudents() {
         List<StudentDTO> studentDTOList = new ArrayList<>();
-        studentRepositoryPostgres.findAll().forEach(
-                studentPostgres -> studentDTOList.add(studentMapper.postgresToDto(studentPostgres))
-        );
+        studentRepositoryPostgres.findAll().forEach(studentPostgres -> studentDTOList.add(studentMapper.postgresToDto(studentPostgres)));
         return studentDTOList;
     }
 
     @Override
     public void addStudent(StudentRequest studentRequest) throws EmailTakenException {
         Optional<StudentPostgres> studentOptional = studentRepositoryPostgres.findByEmail(studentRequest.email());
-        if (studentOptional.isPresent())
-            throw new EmailTakenException("Email taken");
+        if (studentOptional.isPresent()) throw new EmailTakenException("Email taken");
 
         StudentPostgres student = studentMapper.requestToPostgres(studentRequest);
         studentRepositoryPostgres.save(student);
@@ -62,13 +54,11 @@ public class StudentServicePostgresImpl implements StudentService {
         studentRepositoryPostgres.deleteById(id);
     }
 
-    @Transient
     @Override
     public void updateStudent(String studentId, StudentRequest studentRequest) throws StudentNotFoundException, EmailTakenException {
         Long id = validPostgresId(studentId);
         StudentPostgres student = studentMapper.requestToPostgres(studentRequest);
-        StudentPostgres studentReference = studentRepositoryPostgres.findById(id)
-                .orElseThrow(() -> new StudentNotFoundException("No student with ID " + studentId + " in Postgres"));
+        StudentPostgres studentReference = studentRepositoryPostgres.findById(id).orElseThrow(() -> new StudentNotFoundException("No student with ID " + studentId + " in Postgres"));
 
         if (!student.getName().isEmpty()) {
             studentReference.setName(student.getName());
