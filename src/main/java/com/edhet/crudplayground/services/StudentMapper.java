@@ -2,7 +2,6 @@ package com.edhet.crudplayground.services;
 
 import com.edhet.crudplayground.dtos.StudentDTO;
 import com.edhet.crudplayground.dtos.StudentRequest;
-import com.edhet.crudplayground.exceptions.InvalidStudentIdFormatException;
 import com.edhet.crudplayground.models.StudentMongo;
 import com.edhet.crudplayground.models.StudentPostgres;
 import org.springframework.stereotype.Service;
@@ -23,25 +22,6 @@ public class StudentMapper {
         );
     }
 
-    public StudentPostgres dtoToPostgres(StudentDTO studentDTO) throws InvalidStudentIdFormatException {
-        long id;
-        try {
-            id = Long.parseLong(studentDTO.id());
-        } catch (NumberFormatException e) {
-            throw new InvalidStudentIdFormatException(studentDTO.id() + " is not a valid Postgres ID");
-        }
-
-        return new StudentPostgres(
-                id,
-                studentDTO.name(),
-                studentDTO.email(),
-                studentDTO.course(),
-                studentDTO.birthDate(),
-                studentDTO.gender()
-        );
-    }
-
-
     public StudentDTO postgresToDto(StudentPostgres studentPostgres) {
         return new StudentDTO(
                 studentPostgres.getId().toString(),
@@ -61,17 +41,6 @@ public class StudentMapper {
                 studentRequest.course(),
                 studentRequest.birthDate(),
                 studentRequest.gender()
-        );
-    }
-
-    public StudentMongo dtoToMongo(StudentDTO studentDTO) {
-        return new StudentMongo(
-                studentDTO.id(),
-                studentDTO.name(),
-                studentDTO.email(),
-                studentDTO.course(),
-                studentDTO.birthDate(),
-                studentDTO.gender()
         );
     }
 
