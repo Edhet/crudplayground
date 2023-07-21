@@ -22,6 +22,8 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class StudentServiceMongoImplTest {
+    private final LocalDate NEW_BIRTH_DATE = LocalDate.of(2020, 1, 1);
+    private final LocalDate BIRTH_DATE = LocalDate.of(2000, 1, 1);
 
     @Mock
     private StudentMapper studentMapper;
@@ -38,7 +40,7 @@ class StudentServiceMongoImplTest {
     @Test
     void getStudent_Success() {
         // GIVEN
-        StudentMongo expected = new StudentMongo("name", "email@email.com", "course", LocalDate.of(2000, 1, 1), MALE);
+        StudentMongo expected = new StudentMongo("name", "email@email.com", "course", BIRTH_DATE, MALE);
         String id = "id";
 
         when(studentRepositoryMongo.findById(id)).thenReturn(Optional.of(expected));
@@ -74,8 +76,8 @@ class StudentServiceMongoImplTest {
     @Test
     void addStudent_Success() {
         // GIVEN
-        StudentRequest request = new StudentRequest("name", "email@email.com", "course", LocalDate.of(2000, 1, 1), MALE);
-        StudentMongo expected = new StudentMongo("name", "email@email.com", "course", LocalDate.of(2000, 1, 1), MALE);
+        StudentRequest request = new StudentRequest("name", "email@email.com", "course", BIRTH_DATE, MALE);
+        StudentMongo expected = new StudentMongo("name", "email@email.com", "course", BIRTH_DATE, MALE);
 
         when(studentMapper.requestToMongo(request)).thenReturn(expected);
 
@@ -90,8 +92,8 @@ class StudentServiceMongoImplTest {
     @Test
     void addStudent_EmailTaken() {
         // GIVEN
-        StudentRequest student = new StudentRequest("name", "email@email.com", "course", LocalDate.of(2000, 1, 1), MALE);
-        StudentMongo expected = new StudentMongo("name", "email@email.com", "course", LocalDate.of(2000, 1, 1), MALE);
+        StudentRequest student = new StudentRequest("name", "email@email.com", "course", BIRTH_DATE, MALE);
+        StudentMongo expected = new StudentMongo("name", "email@email.com", "course", BIRTH_DATE, MALE);
 
         when(studentRepositoryMongo.findByEmail(student.email())).thenReturn(Optional.of(expected));
 
@@ -128,10 +130,10 @@ class StudentServiceMongoImplTest {
     @Test
     void updateStudent_Success() {
         // GIVEN
-        StudentRequest request = new StudentRequest("new", "new@new.com", "new", LocalDate.of(2020, 1, 1), FEMALE);
-        StudentMongo student = new StudentMongo("name", "email@email.com", "course", LocalDate.of(2000, 1, 1), MALE);
+        StudentRequest request = new StudentRequest("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
+        StudentMongo student = new StudentMongo("name", "email@email.com", "course", BIRTH_DATE, MALE);
 
-        StudentMongo expected = new StudentMongo("new", "new@email.com", "new", LocalDate.of(2020, 1, 1), FEMALE);
+        StudentMongo expected = new StudentMongo("new", "new@email.com", "new", NEW_BIRTH_DATE, FEMALE);
 
         String id = "id";
 
@@ -152,7 +154,7 @@ class StudentServiceMongoImplTest {
     @Test
     void updateStudent_StudentNotFound() {
         //GIVEN
-        StudentRequest request = new StudentRequest("new", "new@new.com", "new", LocalDate.of(2020, 1, 1), FEMALE);
+        StudentRequest request = new StudentRequest("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
         String id = "id";
         when(studentRepositoryMongo.findById(id)).thenReturn(Optional.empty());
 
@@ -164,8 +166,8 @@ class StudentServiceMongoImplTest {
     @Test
     void updateStudent_EmailTaken() {
         // GIVEN
-        StudentRequest request = new StudentRequest("new", "new@new.com", "new", LocalDate.of(2020, 1, 1), FEMALE);
-        StudentMongo anyNonNullMongo = new StudentMongo("new", "new@email.com", "new", LocalDate.of(2020, 1, 1), FEMALE);
+        StudentRequest request = new StudentRequest("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
+        StudentMongo anyNonNullMongo = new StudentMongo("new", "new@email.com", "new", NEW_BIRTH_DATE, FEMALE);
 
         String id = "id";
 

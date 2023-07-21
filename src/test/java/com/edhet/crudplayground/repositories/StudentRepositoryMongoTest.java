@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataMongoTest
 class StudentRepositoryMongoTest {
+    private final LocalDate BIRTH_DATE = LocalDate.of(2000, 1, 1);
 
     @Autowired
     private StudentRepositoryMongo studentRepositoryMongo;
@@ -26,7 +27,7 @@ class StudentRepositoryMongoTest {
     @Test
     void shouldFindByEmail() {
         // GIVEN
-        StudentMongo student = new StudentMongo("name", "email@email.com", "course", LocalDate.of(2000, 1, 1), MALE);
+        StudentMongo student = new StudentMongo("name", "email@email.com", "course", BIRTH_DATE, MALE);
 
         // WHEN
         studentRepositoryMongo.save(student);

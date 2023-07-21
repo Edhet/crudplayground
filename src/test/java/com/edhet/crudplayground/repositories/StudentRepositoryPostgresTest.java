@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class StudentRepositoryPostgresTest {
+    private final LocalDate BIRTH_DATE = LocalDate.of(2000, 1, 1);
 
     @Autowired
     private StudentRepositoryPostgres studentRepositoryPostgres;
@@ -28,7 +29,7 @@ class StudentRepositoryPostgresTest {
     @Test
     void shouldFindByEmail() {
         // GIVEN
-        StudentPostgres student = new StudentPostgres("name", "email@email.com", "course", LocalDate.of(2000, 1, 1), MALE);
+        StudentPostgres student = new StudentPostgres("name", "email@email.com", "course", BIRTH_DATE, MALE);
 
         // WHEN
         studentRepositoryPostgres.save(student);
