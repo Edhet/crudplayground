@@ -2,6 +2,7 @@ package com.edhet.crudplayground.services;
 
 import com.edhet.crudplayground.dtos.StudentRequest;
 import com.edhet.crudplayground.exceptions.EmailTakenException;
+import com.edhet.crudplayground.exceptions.InvalidBirthDateException;
 import com.edhet.crudplayground.exceptions.StudentNotFoundException;
 import com.edhet.crudplayground.models.StudentMongo;
 import com.edhet.crudplayground.models.StudentPostgres;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.*;
 class StudentServiceMongoImplTest {
     private final LocalDate NEW_BIRTH_DATE = LocalDate.of(2020, 1, 1);
     private final LocalDate BIRTH_DATE = LocalDate.of(2000, 1, 1);
+    private final LocalDate INVALID_DATE = LocalDate.now().plusDays(1);
 
     @Mock
     private StudentMapper studentMapper;
@@ -103,6 +105,19 @@ class StudentServiceMongoImplTest {
         verify(studentRepositoryMongo, never()).save(any());
     }
 
+
+    @Test
+    void addStudent_InvalidBirthDate() {
+        // GIVEN
+        StudentRequest student = new StudentRequest("name", "email@email.com", "course", INVALID_DATE, MALE);
+
+        when(studentRepositoryMongo.findByEmail(student.email())).thenReturn(Optional.empty());
+
+        // THEN
+        assertThrows(InvalidBirthDateException.class, () -> studentServiceMongo.addStudent(student));
+        verify(studentRepositoryMongo, never()).save(any());
+    }
+
     @Test
     void deleteStudent_Success() {
         // GIVEN
@@ -177,6 +192,22 @@ class StudentServiceMongoImplTest {
 
         // THEN
         assertThrows(EmailTakenException.class, () -> studentServiceMongo.updateStudent(id, request));
+        verify(studentRepositoryMongo, never()).save(any());
+    }
+
+    @Test
+    void updateStudent_InvalidBirthDate() {
+        //GIVEN
+        StudentRequest request = new StudentRequest("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
+        StudentMongo student = new StudentMongo("new", "new@email.com", "new", INVALID_DATE, FEMALE);
+
+        String id = "id";
+
+        when(studentRepositoryMongo.findById(id)).thenReturn(Optional.of(student));
+        when(studentMapper.requestToMongo(request)).thenReturn(student);
+
+        //THEN
+        assertThrows(InvalidBirthDateException.class, () -> studentServiceMongo.updateStudent(id, request));
         verify(studentRepositoryMongo, never()).save(any());
     }
 

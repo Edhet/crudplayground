@@ -2,13 +2,12 @@ package com.edhet.crudplayground.services;
 
 import com.edhet.crudplayground.dtos.StudentDTO;
 import com.edhet.crudplayground.dtos.StudentRequest;
-import com.edhet.crudplayground.exceptions.EmailTakenException;
-import com.edhet.crudplayground.exceptions.InvalidStudentIdFormatException;
-import com.edhet.crudplayground.exceptions.StudentNotFoundException;
+import com.edhet.crudplayground.exceptions.*;
 import com.edhet.crudplayground.models.StudentPostgres;
 import com.edhet.crudplayground.repositories.StudentRepositoryPostgres;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +41,9 @@ public class StudentServicePostgresImpl implements StudentService {
         Optional<StudentPostgres> studentOptional = studentRepositoryPostgres.findByEmail(studentRequest.email());
         if (studentOptional.isPresent()) throw new EmailTakenException("Email taken");
 
+        if (studentRequest.birthDate().isAfter(LocalDate.now()))
+            throw new InvalidBirthDateException("The given birth date is after today");
+
         StudentPostgres student = studentMapper.requestToPostgres(studentRequest);
         studentRepositoryPostgres.save(student);
     }
@@ -59,6 +61,10 @@ public class StudentServicePostgresImpl implements StudentService {
         Long id = validPostgresId(studentId);
         StudentPostgres student = studentMapper.requestToPostgres(studentRequest);
         StudentPostgres studentReference = studentRepositoryPostgres.findById(id).orElseThrow(() -> new StudentNotFoundException("No student with ID " + studentId + " in Postgres"));
+
+        if (student.getBirthDate().isAfter(LocalDate.now()))
+            throw new InvalidBirthDateException("The given birth date is after today");
+
 
         if (!student.getName().isEmpty()) {
             studentReference.setName(student.getName());

@@ -3,11 +3,14 @@ package com.edhet.crudplayground.services;
 import com.edhet.crudplayground.dtos.StudentDTO;
 import com.edhet.crudplayground.dtos.StudentRequest;
 import com.edhet.crudplayground.exceptions.EmailTakenException;
+import com.edhet.crudplayground.exceptions.InvalidBirthDateException;
+import com.edhet.crudplayground.exceptions.InvalidDatabaseSelectedException;
 import com.edhet.crudplayground.exceptions.StudentNotFoundException;
 import com.edhet.crudplayground.repositories.StudentRepositoryMongo;
 import com.edhet.crudplayground.models.StudentMongo;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +45,9 @@ public class StudentServiceMongoImpl implements StudentService {
         if (studentOptional.isPresent())
             throw new EmailTakenException("Email taken");
 
+        if (studentRequest.birthDate().isAfter(LocalDate.now()))
+            throw new InvalidBirthDateException("The given birth date is after today");
+
         StudentMongo student = studentMapper.requestToMongo(studentRequest);
         studentRepositoryMongo.save(student);
     }
@@ -58,6 +64,9 @@ public class StudentServiceMongoImpl implements StudentService {
         StudentMongo student = studentMapper.requestToMongo(studentRequest);
         StudentMongo studentReference = studentRepositoryMongo.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException("No student with ID " + studentId + " in MongoDB"));
+
+        if (student.getBirthDate().isAfter(LocalDate.now()))
+            throw new InvalidBirthDateException("The given birth date is after today");
 
         if (!student.getName().isEmpty()) {
             studentReference.setName(student.getName());

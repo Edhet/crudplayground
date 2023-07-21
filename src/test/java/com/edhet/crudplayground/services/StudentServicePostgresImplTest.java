@@ -1,10 +1,7 @@
 package com.edhet.crudplayground.services;
 
 import com.edhet.crudplayground.dtos.StudentRequest;
-import com.edhet.crudplayground.exceptions.EmailTakenException;
-import com.edhet.crudplayground.exceptions.InvalidDatabaseSelectedException;
-import com.edhet.crudplayground.exceptions.InvalidStudentIdFormatException;
-import com.edhet.crudplayground.exceptions.StudentNotFoundException;
+import com.edhet.crudplayground.exceptions.*;
 import com.edhet.crudplayground.models.StudentMongo;
 import com.edhet.crudplayground.models.StudentPostgres;
 import com.edhet.crudplayground.repositories.StudentRepositoryMongo;
@@ -29,7 +26,7 @@ import static org.mockito.Mockito.*;
 class StudentServicePostgresImplTest {
     private final LocalDate NEW_BIRTH_DATE = LocalDate.of(2020, 1, 1);
     private final LocalDate BIRTH_DATE = LocalDate.of(2000, 1, 1);
-
+    private final LocalDate INVALID_DATE = LocalDate.now().plusDays(1);
 
     @Mock
     private StudentMapper studentMapper;
@@ -124,6 +121,18 @@ class StudentServicePostgresImplTest {
     }
 
     @Test
+    void addStudent_InvalidBirthDate() {
+        // GIVEN
+        StudentRequest student = new StudentRequest("name", "email@email.com", "course", INVALID_DATE, MALE);
+
+        when(studentRepositoryPostgres.findByEmail(student.email())).thenReturn(Optional.empty());
+
+        // THEN
+        assertThrows(InvalidBirthDateException.class, () -> studentServicePostgres.addStudent(student));
+        verify(studentRepositoryPostgres, never()).save(any());
+    }
+
+    @Test
     void deleteStudent_Success() {
         // GIVEN
         String stringId = "1";
@@ -212,6 +221,23 @@ class StudentServicePostgresImplTest {
 
         // THEN
         assertThrows(EmailTakenException.class, () -> studentServicePostgres.updateStudent(stringId, request));
+        verify(studentRepositoryPostgres, never()).save(any());
+    }
+
+    @Test
+    void updateStudent_InvalidBirthDate() {
+        //GIVEN
+        StudentRequest request = new StudentRequest("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
+        StudentPostgres student = new StudentPostgres("new", "new@email.com", "new", INVALID_DATE, FEMALE);
+
+        String stringId = "1";
+        long expectedId = 1L;
+
+        when(studentRepositoryPostgres.findById(expectedId)).thenReturn(Optional.of(student));
+        when(studentMapper.requestToPostgres(request)).thenReturn(student);
+
+        //THEN
+        assertThrows(InvalidBirthDateException.class, () -> studentServicePostgres.updateStudent(stringId, request));
         verify(studentRepositoryPostgres, never()).save(any());
     }
 
