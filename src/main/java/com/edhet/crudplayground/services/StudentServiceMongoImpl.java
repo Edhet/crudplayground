@@ -1,10 +1,9 @@
 package com.edhet.crudplayground.services;
 
 import com.edhet.crudplayground.dtos.StudentDTO;
-import com.edhet.crudplayground.dtos.StudentRequest;
+import com.edhet.crudplayground.dtos.RequestDTO;
 import com.edhet.crudplayground.exceptions.EmailTakenException;
 import com.edhet.crudplayground.exceptions.InvalidBirthDateException;
-import com.edhet.crudplayground.exceptions.InvalidDatabaseSelectedException;
 import com.edhet.crudplayground.exceptions.StudentNotFoundException;
 import com.edhet.crudplayground.repositories.StudentRepositoryMongo;
 import com.edhet.crudplayground.models.StudentMongo;
@@ -40,15 +39,15 @@ public class StudentServiceMongoImpl implements StudentService {
     }
 
     @Override
-    public void addStudent(StudentRequest studentRequest) throws EmailTakenException {
-        Optional<StudentMongo> studentOptional = studentRepositoryMongo.findByEmail(studentRequest.email());
+    public void addStudent(RequestDTO requestDTO) throws EmailTakenException {
+        Optional<StudentMongo> studentOptional = studentRepositoryMongo.findByEmail(requestDTO.email());
         if (studentOptional.isPresent())
             throw new EmailTakenException("Email taken");
 
-        if (studentRequest.birthDate().isAfter(LocalDate.now()))
+        if (requestDTO.birthDate().isAfter(LocalDate.now()))
             throw new InvalidBirthDateException("The given birth date is after today");
 
-        StudentMongo student = studentMapper.requestToMongo(studentRequest);
+        StudentMongo student = studentMapper.requestToMongo(requestDTO);
         studentRepositoryMongo.save(student);
     }
 
@@ -60,8 +59,8 @@ public class StudentServiceMongoImpl implements StudentService {
     }
 
     @Override
-    public void updateStudent(String studentId, StudentRequest studentRequest) throws StudentNotFoundException, EmailTakenException {
-        StudentMongo student = studentMapper.requestToMongo(studentRequest);
+    public void updateStudent(String studentId, RequestDTO requestDTO) throws StudentNotFoundException, EmailTakenException {
+        StudentMongo student = studentMapper.requestToMongo(requestDTO);
         StudentMongo studentReference = studentRepositoryMongo.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException("No student with ID " + studentId + " in MongoDB"));
 

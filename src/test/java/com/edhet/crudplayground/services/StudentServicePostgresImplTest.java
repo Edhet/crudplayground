@@ -1,10 +1,8 @@
 package com.edhet.crudplayground.services;
 
-import com.edhet.crudplayground.dtos.StudentRequest;
+import com.edhet.crudplayground.dtos.RequestDTO;
 import com.edhet.crudplayground.exceptions.*;
-import com.edhet.crudplayground.models.StudentMongo;
 import com.edhet.crudplayground.models.StudentPostgres;
-import com.edhet.crudplayground.repositories.StudentRepositoryMongo;
 import com.edhet.crudplayground.repositories.StudentRepositoryPostgres;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.util.Iterator;
 import java.util.Optional;
 
 import static com.edhet.crudplayground.models.Gender.FEMALE;
@@ -92,7 +89,7 @@ class StudentServicePostgresImplTest {
     @Test
     void addStudent_Success() {
         // GIVEN
-        StudentRequest request = new StudentRequest("name", "email@email.com", "course", BIRTH_DATE, MALE);
+        RequestDTO request = new RequestDTO("name", "email@email.com", "course", BIRTH_DATE, MALE);
         StudentPostgres expected = new StudentPostgres("name", "email@email.com", "course", BIRTH_DATE, MALE);
 
         when(studentMapper.requestToPostgres(request)).thenReturn(expected);
@@ -109,7 +106,7 @@ class StudentServicePostgresImplTest {
     @Test
     void addStudent_EmailTaken() {
         // GIVEN
-        StudentRequest student = new StudentRequest("name", "email@email.com", "course", BIRTH_DATE, MALE);
+        RequestDTO student = new RequestDTO("name", "email@email.com", "course", BIRTH_DATE, MALE);
         StudentPostgres expected = new StudentPostgres("name", "email@email.com", "course", BIRTH_DATE, MALE);
 
         when(studentRepositoryPostgres.findByEmail(student.email())).thenReturn(Optional.of(expected));
@@ -123,7 +120,7 @@ class StudentServicePostgresImplTest {
     @Test
     void addStudent_InvalidBirthDate() {
         // GIVEN
-        StudentRequest student = new StudentRequest("name", "email@email.com", "course", INVALID_DATE, MALE);
+        RequestDTO student = new RequestDTO("name", "email@email.com", "course", INVALID_DATE, MALE);
 
         when(studentRepositoryPostgres.findByEmail(student.email())).thenReturn(Optional.empty());
 
@@ -171,7 +168,7 @@ class StudentServicePostgresImplTest {
     @Test
     void updateStudent_Success() {
         // GIVEN
-        StudentRequest request = new StudentRequest("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
+        RequestDTO request = new RequestDTO("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
         StudentPostgres student = new StudentPostgres("name", "email@email.com", "course", BIRTH_DATE, MALE);
 
         StudentPostgres expected = new StudentPostgres("new", "new@email.com", "new", NEW_BIRTH_DATE, FEMALE);
@@ -194,7 +191,7 @@ class StudentServicePostgresImplTest {
     @Test
     void updateStudent_StudentNotFound() {
         //GIVEN
-        StudentRequest request = new StudentRequest("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
+        RequestDTO request = new RequestDTO("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
         String stringId = "1";
         long expectedId = 1L;
         when(studentRepositoryPostgres.findById(expectedId)).thenReturn(Optional.empty());
@@ -208,7 +205,7 @@ class StudentServicePostgresImplTest {
     @Test
     void updateStudent_EmailTaken() {
         // GIVEN
-        StudentRequest request = new StudentRequest("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
+        RequestDTO request = new RequestDTO("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
         StudentPostgres student = new StudentPostgres("new", "new@email.com", "new", NEW_BIRTH_DATE, FEMALE);
         StudentPostgres differentNonNull = new StudentPostgres("different", "different@email.com", "new", NEW_BIRTH_DATE, FEMALE);
 
@@ -227,7 +224,7 @@ class StudentServicePostgresImplTest {
     @Test
     void updateStudent_InvalidBirthDate() {
         //GIVEN
-        StudentRequest request = new StudentRequest("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
+        RequestDTO request = new RequestDTO("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
         StudentPostgres student = new StudentPostgres("new", "new@email.com", "new", INVALID_DATE, FEMALE);
 
         String stringId = "1";
@@ -244,7 +241,7 @@ class StudentServicePostgresImplTest {
     @Test
     void updateStudent_InvalidStudentIdFormat() {
         // GIVEN
-        StudentRequest request = new StudentRequest("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
+        RequestDTO request = new RequestDTO("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
         String invalidId = "a";
 
         // THEN

@@ -1,7 +1,7 @@
 package com.edhet.crudplayground.services;
 
 import com.edhet.crudplayground.dtos.StudentDTO;
-import com.edhet.crudplayground.dtos.StudentRequest;
+import com.edhet.crudplayground.dtos.RequestDTO;
 import com.edhet.crudplayground.models.StudentMongo;
 import com.edhet.crudplayground.models.StudentPostgres;
 import org.springframework.stereotype.Service;
@@ -12,13 +12,13 @@ public class StudentMapper {
     public StudentMapper() {
     }
 
-    public StudentPostgres requestToPostgres(StudentRequest studentRequest) {
+    public StudentPostgres requestToPostgres(RequestDTO requestDTO) {
         return new StudentPostgres(
-                studentRequest.name(),
-                studentRequest.email(),
-                studentRequest.course(),
-                studentRequest.birthDate(),
-                studentRequest.gender()
+                requestDTO.name(),
+                requestDTO.email(),
+                requestDTO.course(),
+                requestDTO.birthDate(),
+                requestDTO.gender()
         );
     }
 
@@ -34,13 +34,13 @@ public class StudentMapper {
         );
     }
 
-    public StudentMongo requestToMongo(StudentRequest studentRequest) {
+    public StudentMongo requestToMongo(RequestDTO requestDTO) {
         return new StudentMongo(
-                studentRequest.name(),
-                studentRequest.email(),
-                studentRequest.course(),
-                studentRequest.birthDate(),
-                studentRequest.gender()
+                requestDTO.name(),
+                requestDTO.email(),
+                requestDTO.course(),
+                requestDTO.birthDate(),
+                requestDTO.gender()
         );
     }
 

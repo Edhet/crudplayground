@@ -1,7 +1,7 @@
 package com.edhet.crudplayground.controllers;
 
 import com.edhet.crudplayground.dtos.StudentDTO;
-import com.edhet.crudplayground.dtos.StudentRequest;
+import com.edhet.crudplayground.dtos.RequestDTO;
 import com.edhet.crudplayground.services.StudentService;
 import com.edhet.crudplayground.services.StudentServiceFactory;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = {"*"}, allowedHeaders = {"*"})
 @RequestMapping("api/v1/student")
 public class StudentController {
 
@@ -31,15 +32,15 @@ public class StudentController {
     }
 
     @PostMapping
-    public void addStudent(@RequestParam String database, @RequestBody StudentRequest studentRequest) {
+    public void addStudent(@RequestParam String database, @RequestBody RequestDTO requestDTO) {
         StudentService studentService = studentServiceFactory.getStudentService(database);
-        studentService.addStudent(studentRequest);
+        studentService.addStudent(requestDTO);
     }
 
     @PutMapping(path = "{studentId}")
-    public void updateStudentById(@RequestParam String database, @PathVariable("studentId") String studentId, @RequestBody StudentRequest studentRequest) {
+    public void updateStudentById(@RequestParam String database, @PathVariable("studentId") String studentId, @RequestBody RequestDTO requestDTO) {
         StudentService studentService = studentServiceFactory.getStudentService(database);
-        studentService.updateStudent(studentId, studentRequest);
+        studentService.updateStudent(studentId, requestDTO);
     }
 
     @DeleteMapping(path = "{studentId}")

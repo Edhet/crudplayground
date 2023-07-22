@@ -1,13 +1,10 @@
 package com.edhet.crudplayground.services;
 
 import com.edhet.crudplayground.dtos.StudentDTO;
-import com.edhet.crudplayground.dtos.StudentRequest;
-import com.edhet.crudplayground.models.Gender;
+import com.edhet.crudplayground.dtos.RequestDTO;
 import com.edhet.crudplayground.models.StudentMongo;
 import com.edhet.crudplayground.models.StudentPostgres;
-import net.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -23,11 +20,11 @@ class StudentMapperTest {
     @Test
     void requestToPostgres() {
         // GIVEN
-        StudentRequest studentRequest = new StudentRequest("name", "email@email.com", "course", BIRTH_DATE, MALE);
+        RequestDTO requestDTO = new RequestDTO("name", "email@email.com", "course", BIRTH_DATE, MALE);
         StudentPostgres expected = new StudentPostgres("name", "email@email.com", "course", BIRTH_DATE, MALE);
 
         // THEN
-        assertEquals(expected, studentMapper.requestToPostgres(studentRequest));
+        assertEquals(expected, studentMapper.requestToPostgres(requestDTO));
     }
 
     @Test
@@ -43,11 +40,11 @@ class StudentMapperTest {
     @Test
     void requestToMongo() {
         // GIVEN
-        StudentRequest studentRequest = new StudentRequest("name", "email@email.com", "course", BIRTH_DATE, MALE);
+        RequestDTO requestDTO = new RequestDTO("name", "email@email.com", "course", BIRTH_DATE, MALE);
         StudentMongo expected = new StudentMongo("name", "email@email.com", "course", BIRTH_DATE, MALE);
 
         // THEN
-        assertEquals(expected, studentMapper.requestToMongo(studentRequest));
+        assertEquals(expected, studentMapper.requestToMongo(requestDTO));
     }
 
     @Test

@@ -1,11 +1,10 @@
 package com.edhet.crudplayground.services;
 
-import com.edhet.crudplayground.dtos.StudentRequest;
+import com.edhet.crudplayground.dtos.RequestDTO;
 import com.edhet.crudplayground.exceptions.EmailTakenException;
 import com.edhet.crudplayground.exceptions.InvalidBirthDateException;
 import com.edhet.crudplayground.exceptions.StudentNotFoundException;
 import com.edhet.crudplayground.models.StudentMongo;
-import com.edhet.crudplayground.models.StudentPostgres;
 import com.edhet.crudplayground.repositories.StudentRepositoryMongo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -78,7 +77,7 @@ class StudentServiceMongoImplTest {
     @Test
     void addStudent_Success() {
         // GIVEN
-        StudentRequest request = new StudentRequest("name", "email@email.com", "course", BIRTH_DATE, MALE);
+        RequestDTO request = new RequestDTO("name", "email@email.com", "course", BIRTH_DATE, MALE);
         StudentMongo expected = new StudentMongo("name", "email@email.com", "course", BIRTH_DATE, MALE);
 
         when(studentMapper.requestToMongo(request)).thenReturn(expected);
@@ -94,7 +93,7 @@ class StudentServiceMongoImplTest {
     @Test
     void addStudent_EmailTaken() {
         // GIVEN
-        StudentRequest student = new StudentRequest("name", "email@email.com", "course", BIRTH_DATE, MALE);
+        RequestDTO student = new RequestDTO("name", "email@email.com", "course", BIRTH_DATE, MALE);
         StudentMongo expected = new StudentMongo("name", "email@email.com", "course", BIRTH_DATE, MALE);
 
         when(studentRepositoryMongo.findByEmail(student.email())).thenReturn(Optional.of(expected));
@@ -109,7 +108,7 @@ class StudentServiceMongoImplTest {
     @Test
     void addStudent_InvalidBirthDate() {
         // GIVEN
-        StudentRequest student = new StudentRequest("name", "email@email.com", "course", INVALID_DATE, MALE);
+        RequestDTO student = new RequestDTO("name", "email@email.com", "course", INVALID_DATE, MALE);
 
         when(studentRepositoryMongo.findByEmail(student.email())).thenReturn(Optional.empty());
 
@@ -145,7 +144,7 @@ class StudentServiceMongoImplTest {
     @Test
     void updateStudent_Success() {
         // GIVEN
-        StudentRequest request = new StudentRequest("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
+        RequestDTO request = new RequestDTO("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
         StudentMongo student = new StudentMongo("name", "email@email.com", "course", BIRTH_DATE, MALE);
 
         StudentMongo expected = new StudentMongo("new", "new@email.com", "new", NEW_BIRTH_DATE, FEMALE);
@@ -168,7 +167,7 @@ class StudentServiceMongoImplTest {
     @Test
     void updateStudent_StudentNotFound() {
         //GIVEN
-        StudentRequest request = new StudentRequest("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
+        RequestDTO request = new RequestDTO("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
         String id = "id";
         when(studentRepositoryMongo.findById(id)).thenReturn(Optional.empty());
 
@@ -180,7 +179,7 @@ class StudentServiceMongoImplTest {
     @Test
     void updateStudent_EmailTaken() {
         // GIVEN
-        StudentRequest request = new StudentRequest("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
+        RequestDTO request = new RequestDTO("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
         StudentMongo student = new StudentMongo("new", "new@email.com", "new", NEW_BIRTH_DATE, FEMALE);
         StudentMongo differentNonNull = new StudentMongo("different", "different@email.com", "new", NEW_BIRTH_DATE, FEMALE);
 
@@ -198,7 +197,7 @@ class StudentServiceMongoImplTest {
     @Test
     void updateStudent_InvalidBirthDate() {
         //GIVEN
-        StudentRequest request = new StudentRequest("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
+        RequestDTO request = new RequestDTO("new", "new@new.com", "new", NEW_BIRTH_DATE, FEMALE);
         StudentMongo student = new StudentMongo("new", "new@email.com", "new", INVALID_DATE, FEMALE);
 
         String id = "id";
