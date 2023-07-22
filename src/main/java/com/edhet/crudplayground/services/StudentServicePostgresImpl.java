@@ -66,7 +66,7 @@ public class StudentServicePostgresImpl implements StudentService {
             throw new InvalidBirthDateException("The given birth date is after today");
 
 
-        if (!student.getName().isEmpty()) {
+        if (student.getName() != null && !student.getName().isEmpty()) {
             studentReference.setName(student.getName());
         }
         if (student.getBirthDate() != null) {
