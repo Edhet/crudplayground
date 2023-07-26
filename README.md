@@ -1,3 +1,5 @@
+![Frotend Gif](./.github/crudplayground.gif)
+
 # Back-end
 
 The backend is a default Springboot application that runs on the port 8080.
